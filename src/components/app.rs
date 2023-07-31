@@ -1,15 +1,19 @@
 use super::{Canvas, Input};
-use crate::{algs::Dfs, graph::Graph};
+use crate::{
+    algs::{Algorithm, Dfs},
+    graph::Graph,
+};
 use leptos::*;
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     // let (graph, set_graph) = create_signal(cx, default_graph());
-    let (dfs, set_dfs) = create_signal(cx, Dfs::new(default_graph()));
-    provide_context(cx, (dfs, set_dfs));
+    let alg: Box<dyn Algorithm> = Box::new(Dfs::new(default_graph()));
+    let (alg, set_alg) = create_signal(cx, alg);
+    provide_context(cx, (alg, set_alg));
 
     let step = move |_| {
-        set_dfs.update(|dfs| {
+        set_alg.update(|dfs| {
             log!("Updating");
             dfs.step();
         });
@@ -20,11 +24,21 @@ pub fn App(cx: Scope) -> impl IntoView {
         <p>Graph Algorithm Visualizer</p>
         <div class="flex gap-2">
             <div>
-                { Dfs::input(cx) }
+                { move || {
+                    alg.with(|alg| {
+                        alg.input(cx)
+                    })
+                } }
                 <button on:click=step class="mt-8 border p-2 rounded">"Next step"</button>
             </div>
             <Canvas />
-            { Dfs::output(cx) }
+            {
+                { move || {
+                    alg.with(|alg| {
+                        alg.output(cx)
+                    })
+                } }
+            }
         </div>
         <div class="flex gap-4">
         </div>

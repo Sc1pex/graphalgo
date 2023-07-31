@@ -2,22 +2,29 @@ use leptos::{html::Canvas, *};
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{algs::Dfs, graph::Graph};
+use crate::{
+    algs::{Algorithm, Dfs},
+    graph::Graph,
+};
 
 #[component]
 pub fn Canvas(cx: Scope) -> impl IntoView {
     let canvas_ref = create_node_ref::<Canvas>(cx);
-    let (graph, _set_graph) = use_context::<(ReadSignal<Dfs>, WriteSignal<Dfs>)>(cx).unwrap();
+    let (graph, _set_graph) = use_context::<(
+        ReadSignal<Box<dyn Algorithm>>,
+        WriteSignal<Box<dyn Algorithm>>,
+    )>(cx)
+    .unwrap();
     canvas_ref.on_load(cx, move |canvas| {
         canvas.set_width(500);
         canvas.set_height(500);
 
-        graph.with_untracked(|g| draw_graph(&g.graph, &canvas))
+        graph.with_untracked(|g| draw_graph(&g.graph(), &canvas))
     });
 
     create_effect(cx, move |_| {
         if let Some(canvas) = canvas_ref.get() {
-            graph.with(|g| draw_graph(&g.graph, &canvas))
+            graph.with(|g| draw_graph(&g.graph(), &canvas))
         }
     });
 

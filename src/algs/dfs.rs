@@ -1,3 +1,4 @@
+use super::Algorithm;
 use crate::{
     graph::Graph,
     graphstyle::{EdgeStyle, NodeStyle},
@@ -9,7 +10,7 @@ pub struct Dfs {
     visited: Vec<bool>,
     queue: VecDeque<(Option<usize>, usize)>,
 
-    pub graph: Graph,
+    graph: Graph,
     output: Vec<String>,
 }
 
@@ -25,8 +26,18 @@ impl Dfs {
         dfs.start(0);
         dfs
     }
+}
 
-    pub fn start(&mut self, input: usize) {
+impl Algorithm for Dfs {
+    fn graph(&self) -> &Graph {
+        &self.graph
+    }
+
+    fn graph_mut(&mut self) -> &mut Graph {
+        &mut self.graph
+    }
+
+    fn start(&mut self, input: usize) {
         self.output = vec![];
         self.queue.clear();
         self.visited = vec![false; self.graph.node_count];
@@ -35,7 +46,7 @@ impl Dfs {
         self.queue.push_back((None, input));
     }
 
-    pub fn step(&mut self) -> Option<()> {
+    fn step(&mut self) -> Option<()> {
         let (last, node) = self.queue.pop_back()?;
         if self.visited[node] {
             return Some(());
@@ -68,23 +79,31 @@ impl Dfs {
         Some(())
     }
 
-    pub fn input(cx: Scope) -> impl IntoView {
+    fn input(&self, cx: Scope) -> View {
         view! { cx,
             <DfsInput />
         }
     }
 
-    pub fn output(cx: Scope) -> impl IntoView {
+    fn output(&self, cx: Scope) -> View {
         view! { cx,
             <DfsOutput />
         }
+    }
+
+    fn output_text(&self) -> Vec<String> {
+        self.output.clone()
     }
 }
 
 #[component]
 fn dfs_input(cx: Scope) -> impl IntoView {
     let input_ref = create_node_ref::<Input>(cx);
-    let (_dfs, set_dfs) = use_context::<(ReadSignal<Dfs>, WriteSignal<Dfs>)>(cx).unwrap();
+    let (_dfs, set_dfs) = use_context::<(
+        ReadSignal<Box<dyn Algorithm>>,
+        WriteSignal<Box<dyn Algorithm>>,
+    )>(cx)
+    .unwrap();
 
     input_ref.on_load(cx, |input| {
         input.set_value("0");
@@ -113,14 +132,18 @@ fn dfs_input(cx: Scope) -> impl IntoView {
 
 #[component]
 fn dfs_output(cx: Scope) -> impl IntoView {
-    let (dfs, _set_dfs) = use_context::<(ReadSignal<Dfs>, WriteSignal<Dfs>)>(cx).unwrap();
+    let (dfs, _set_dfs) = use_context::<(
+        ReadSignal<Box<dyn Algorithm>>,
+        WriteSignal<Box<dyn Algorithm>>,
+    )>(cx)
+    .unwrap();
 
     view! {cx,
     <div class="flex flex-col gap-2">
         <p class="text-xl mb-2">"Algorithm output"</p>
         {
             move || dfs.with(|dfs| {
-                dfs.output.iter().map(|line| {
+                dfs.output_text().iter().map(|line| {
                     view! {cx,
                     <p>{line}</p>
                     }
