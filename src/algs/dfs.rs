@@ -33,11 +33,14 @@ impl Dfs {
         self.graph.style.reset();
 
         self.queue.push_back((None, input));
-        self.visited[input] = true;
     }
 
     pub fn step(&mut self) -> Option<()> {
-        let (last, node) = self.queue.pop_front()?;
+        let (last, node) = self.queue.pop_back()?;
+        if self.visited[node] {
+            return Some(());
+        }
+        self.visited[node] = true;
 
         self.output.push(format!("Visiting {}\n", node));
         self.graph.style.set_node_style(
@@ -59,10 +62,7 @@ impl Dfs {
         }
 
         for neighbor in &self.graph.edges[node] {
-            if !self.visited[*neighbor] {
-                self.queue.push_back((Some(node), *neighbor));
-                self.visited[*neighbor] = true;
-            }
+            self.queue.push_back((Some(node), *neighbor));
         }
 
         Some(())
