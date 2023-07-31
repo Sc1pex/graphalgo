@@ -31,6 +31,16 @@ impl GraphStyle {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.nodes = vec![NodeStyle::default(); self.nodes.len()];
+        let new_edges = self
+            .edges
+            .keys()
+            .map(|key| (*key, EdgeStyle::default()))
+            .collect();
+        self.edges = new_edges;
+    }
+
     pub fn add_edge(&mut self, mut node1: usize, mut node2: usize) {
         if node1 > node2 {
             std::mem::swap(&mut node1, &mut node2);

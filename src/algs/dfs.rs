@@ -30,6 +30,7 @@ impl Dfs {
         self.output = vec![];
         self.queue.clear();
         self.visited = vec![false; self.graph.node_count];
+        self.graph.style.reset();
 
         self.queue.push_back((None, input));
         self.visited[input] = true;
