@@ -1,9 +1,11 @@
-mod dfs;
-
 use crate::graph::Graph;
 use leptos::{Scope, View};
 
+pub use bfs::*;
 pub use dfs::*;
+
+mod bfs;
+mod dfs;
 
 pub trait Algorithm {
     fn start(&mut self, input: usize);

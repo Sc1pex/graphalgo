@@ -1,11 +1,7 @@
+use crate::{algs::Algorithm, graph::Graph};
 use leptos::{html::Canvas, *};
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::CanvasRenderingContext2d;
-
-use crate::{
-    algs::{Algorithm, Dfs},
-    graph::Graph,
-};
 
 #[component]
 pub fn Canvas(cx: Scope) -> impl IntoView {
