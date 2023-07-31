@@ -34,10 +34,14 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.build.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Get the deployment URL
+        run: echo "${{ steps.build.outputs.url }}"
+      - name: Get the deployment URL
+        run: echo "${{ steps.deployment.outputs.url }}"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
