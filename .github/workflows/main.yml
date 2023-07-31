@@ -10,6 +10,8 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env: TRUNK_BUILD_PUBLIC_URL="/graphalgo/"
+
 name: build-site
 on: [push]
 jobs:
