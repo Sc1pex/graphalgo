@@ -5,3 +5,6 @@ command_arguments = ["-i", "./styles/input.css", "-o", "./styles/output.css"]
 
 [serve]
 port = 6969
+
+[build]
+public_url = "/graphalgo/"
