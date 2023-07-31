@@ -1,6 +1,6 @@
 use leptos::{html::Textarea, *};
 
-use crate::graph::Graph;
+use crate::{algs::Dfs, graph::Graph};
 
 #[component]
 pub fn Input(cx: Scope) -> impl IntoView {
@@ -16,13 +16,15 @@ pub fn Input(cx: Scope) -> impl IntoView {
         );
     });
 
-    let (_graph, set_graph) = use_context::<(ReadSignal<Graph>, WriteSignal<Graph>)>(cx).unwrap();
+    let (_graph, set_dfs) = use_context::<(ReadSignal<Dfs>, WriteSignal<Dfs>)>(cx).unwrap();
 
     let update_graph = move |_| {
         let input = graph_input_ref.get().unwrap().value();
 
         let new_graph: Graph = input.into();
-        set_graph(new_graph);
+        set_dfs.update(|g| {
+            *g = Dfs::new(new_graph);
+        })
     };
 
     view! {cx,

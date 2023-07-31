@@ -1,6 +1,7 @@
 use components::App;
 use leptos::*;
 
+mod algs;
 mod components;
 mod graph;
 mod graphstyle;
